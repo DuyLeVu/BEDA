@@ -51,7 +51,6 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
     @GetMapping("/users")
     public ResponseEntity<Iterable<User>> showAllUser() {
         Iterable<User> users = userService.findAll();
