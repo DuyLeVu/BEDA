@@ -43,20 +43,9 @@ public class User implements Serializable {
 
     private String avatar = "assets/images/defaultAva.png";
 
-    public User() {
-    }
+    private Long posts;
 
-    public User(Long id, String username, String password, String confirmPassword, boolean enabled, Set<Role> roles, String fullName, String email, String phone, String avatar) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
-        this.enabled = enabled;
-        this.roles = roles;
-        this.fullName = fullName;
-        this.email = email;
-        this.phone = phone;
-        this.avatar = avatar;
+    public User() {
     }
 
     public Long getId() {
@@ -137,6 +126,14 @@ public class User implements Serializable {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public Long getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Long posts) {
+        this.posts = posts;
     }
 }
 

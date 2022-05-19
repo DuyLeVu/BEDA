@@ -9,6 +9,7 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String title;
     private String content;
     private Date createAt;
     private int status;
@@ -24,8 +25,9 @@ public class Post {
     public Post() {
     }
 
-    public Post(Long id, String content, Date createAt, int status, User user, Category category, String description, String detail) {
+    public Post(Long id, String title, String content, Date createAt, int status, User user, Category category, String description, String detail) {
         this.id = id;
+        this.title = title;
         this.content = content;
         this.createAt = createAt;
         this.status = status;

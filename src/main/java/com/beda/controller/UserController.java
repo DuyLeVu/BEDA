@@ -84,6 +84,7 @@ public class UserController {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
+        user.setPosts((long) 0);
         userService.save(user);
         VerificationToken token = new VerificationToken(user);
         token.setExpiryDate(10);

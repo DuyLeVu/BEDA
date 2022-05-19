@@ -23,11 +23,36 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Post save(Post post) {
-        return null;
+        return postRepository.save(post);
     }
 
     @Override
     public void remove(Long id) {
 
+    }
+
+    @Override
+    public Iterable<Post> findAllByStatus(int status) {
+        return postRepository.findAllByStatus(status);
+    }
+
+    @Override
+    public Iterable<Post> findAllByTitle(String title) {
+        return postRepository.findAllByTitle(title);
+    }
+
+    @Override
+    public Iterable<Post> findAllByCategoryId(Long id) {
+        return postRepository.findAllByCategoryId(id);
+    }
+
+    @Override
+    public Iterable<Post> findByTitleContainingAndCategoryId(String title, Long id) {
+        return postRepository.findByTitleContainingAndCategoryId(title, id);
+    }
+
+    @Override
+    public Iterable<Post> findAllByUserId(Long userId) {
+        return postRepository.findAllByUserId(userId);
     }
 }
