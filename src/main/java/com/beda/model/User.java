@@ -45,6 +45,12 @@ public class User implements Serializable {
 
     private Long posts;
 
+    private Long comments;
+
+    private Long linkDocs;
+
+    private int status;
+
     public User() {
     }
 
@@ -134,6 +140,30 @@ public class User implements Serializable {
 
     public void setPosts(Long posts) {
         this.posts = posts;
+    }
+
+    public Long getComments() {
+        return comments;
+    }
+
+    public void setComments(Long comments) {
+        this.comments = comments;
+    }
+
+    public Long getLinkDocs() {
+        return linkDocs;
+    }
+
+    public void setLinkDocs(Long linkDocs) {
+        this.linkDocs = linkDocs;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }
 

@@ -3,9 +3,10 @@ package com.beda.service.category;
 import com.beda.model.Category;
 import com.beda.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
+@Service
 public class CategoryServiceImpl implements ICategoryService{
 
     @Autowired
