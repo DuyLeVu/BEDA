@@ -5,6 +5,9 @@ import com.beda.model.User;
 import com.beda.service.UserService;
 import com.beda.service.post.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,15 +25,30 @@ public class PostController {
     @Autowired
     UserService userService;
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("")
-    public ResponseEntity<Iterable<Post>> showAllPost() {
+    public ResponseEntity<Iterable<Post>> showAll() {
         Iterable<Post> posts = postService.findAll();
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/index")
+    public ResponseEntity<Iterable<Post>> showAllPost(@RequestParam int index) {
+        Iterable<Post> posts = postService.getAllPostByIndex(index);
+        if (posts == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/public/{status}")
     public ResponseEntity<Iterable<Post>> getAllPostByStatus(@PathVariable("status") int status) {
         Iterable<Post> posts = this.postService.findAllByStatus(status);
+        if (posts == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
@@ -40,9 +58,34 @@ public class PostController {
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/categories/{categoryId}/index")
+    public ResponseEntity<Iterable<Post>> getAllByCategoryIdAndIndex(@PathVariable Long categoryId,
+                                                             @RequestParam int index) {
+        Iterable<Post> posts = postService.findAllByCategoryIdAndIndex(categoryId, index);
+        if (posts == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/categories/{categoryId}")
     public ResponseEntity<Iterable<Post>> getAllByCategoryId(@PathVariable Long categoryId) {
         Iterable<Post> posts = postService.findAllByCategoryId(categoryId);
+        if (posts == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/findTopNew")
+    public ResponseEntity<Iterable<Post>> findTop6New() {
+        Iterable<Post> posts = postService.findTop6New();
+        if (posts == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
@@ -52,10 +95,20 @@ public class PostController {
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<Iterable<Post>> getAllByUserId(@PathVariable Long userId) {
         Iterable<Post> posts = postService.findAllByUserId(userId);
         return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<Post>> findById(@PathVariable("id") Long id) {
+        Optional<Post> post = postService.findById(id);
+        if (post == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
     @PostMapping

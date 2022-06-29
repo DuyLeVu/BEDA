@@ -18,7 +18,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Optional<Post> findById(Long id) {
-        return Optional.empty();
+        return postRepository.findById(id);
     }
 
     @Override
@@ -28,7 +28,11 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public void remove(Long id) {
+    }
 
+    @Override
+    public Iterable<Post> getAllPostByIndex(int index) {
+        return postRepository.getAllPostByIndex(index);
     }
 
     @Override
@@ -42,8 +46,8 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Iterable<Post> findAllByCategoryId(Long id) {
-        return postRepository.findAllByCategoryId(id);
+    public Iterable<Post> findAllByCategoryIdAndIndex(Long id, int index) {
+        return postRepository.findAllByCategoryIdAndIndex(id, index);
     }
 
     @Override
@@ -54,5 +58,15 @@ public class PostServiceImpl implements IPostService {
     @Override
     public Iterable<Post> findAllByUserId(Long userId) {
         return postRepository.findAllByUserId(userId);
+    }
+
+    @Override
+    public Iterable<Post> findAllByCategoryId(Long categoryId) {
+        return postRepository.findAllByCategoryId(categoryId);
+    }
+
+    @Override
+    public Iterable<Post> findTop6New() {
+        return postRepository.findTop6New();
     }
 }

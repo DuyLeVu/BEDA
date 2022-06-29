@@ -15,7 +15,8 @@ public class CategoryController {
     @Autowired
     ICategoryService categoryService;
 
-    @GetMapping
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("")
     public ResponseEntity<Iterable<Category>> getAll() {
         Iterable<Category> categories = categoryService.findAll();
         return new ResponseEntity<>(categories, HttpStatus.OK);
