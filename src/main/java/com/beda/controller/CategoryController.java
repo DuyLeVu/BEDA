@@ -22,6 +22,7 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/{id}")
     public ResponseEntity<Category> getById(@PathVariable Long id) {
         Optional<Category> category = categoryService.findById(id);

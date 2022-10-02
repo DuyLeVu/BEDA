@@ -10,7 +10,10 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+
+    @Column(length = 3000)
     private String content;
+
     private Date createAt;
     private int status;
     @ManyToOne
@@ -21,11 +24,12 @@ public class Post {
     private Category category;
     private String description;
     private String detail;
+    private String imgs;
 
     public Post() {
     }
 
-    public Post(Long id, String title, String content, Date createAt, int status, User user, Category category, String description, String detail) {
+    public Post(Long id, String title, String content, Date createAt, int status, User user, Category category, String description, String detail, String imgs) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -35,6 +39,7 @@ public class Post {
         this.category = category;
         this.description = description;
         this.detail = detail;
+        this.imgs = imgs;
     }
 
     public Long getId() {
@@ -43,6 +48,22 @@ public class Post {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getImgs() {
+        return imgs;
+    }
+
+    public void setImgs(String imgs) {
+        this.imgs = imgs;
     }
 
     public String getContent() {

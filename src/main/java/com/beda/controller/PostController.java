@@ -111,6 +111,7 @@ public class PostController {
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping
     public ResponseEntity<Post> save(@RequestBody Post post) {
         Date date = new Date(Calendar.getInstance().getTime().getTime());

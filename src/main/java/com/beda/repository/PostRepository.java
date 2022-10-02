@@ -26,7 +26,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Iterable<Post> findAllByCategoryId(@Param("id") Long id);
 
     @Modifying
-    @Query(value = "select * from Post where status = 1 and category_id = ?1 group by id limit ?2,5;", nativeQuery = true)
+    @Query(value = "select * from Post where status = 1 and category_id = ?1 order by id desc limit ?2,5;", nativeQuery = true)
     Iterable<Post> findAllByCategoryIdAndIndex(Long id, int index);
 
     Iterable<Post> findByTitleContainingAndCategoryId(String title, Long id);
