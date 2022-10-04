@@ -2,9 +2,15 @@ package com.beda.repository;
 
 import com.beda.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     Category findByName(String roleName);
+
+    @Modifying
+    @Query(value = "select * from Category order by id desc limit 7;", nativeQuery = true)
+    Iterable<Category> findTop7Category();
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Modifying
-    @Query(value = "select * from Post where status = 1 group by id limit ?1,5;", nativeQuery = true)
+    @Query(value = "select * from Post where status = 1 order by id desc limit ?1,5;", nativeQuery = true)
     Iterable<Post> getAllPostByIndex(int index);
 
     @Modifying

@@ -32,4 +32,8 @@ public class CategoryServiceImpl implements ICategoryService{
         categoryRepository.deleteById(id);
     }
 
+    @Override
+    public Iterable<Category> findTop7Category() {
+        return categoryRepository.findTop7Category();
+    }
 }

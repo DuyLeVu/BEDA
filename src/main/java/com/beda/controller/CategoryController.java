@@ -23,6 +23,13 @@ public class CategoryController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/top7Category")
+    public ResponseEntity<Iterable<Category>> getTop7Category() {
+        Iterable<Category> categories = categoryService.findAll();
+        return new ResponseEntity<>(categories, HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/{id}")
     public ResponseEntity<Category> getById(@PathVariable Long id) {
         Optional<Category> category = categoryService.findById(id);
