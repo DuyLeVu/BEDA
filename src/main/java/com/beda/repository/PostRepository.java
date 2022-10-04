@@ -18,6 +18,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = "select * from Post where status = 1 order by id desc limit 6;", nativeQuery = true)
     Iterable<Post> findTop6New();
 
+    @Modifying
+    @Query(value = "select * from Post where status = 1 and category_id = :id order by id desc limit 6;", nativeQuery = true)
+    Iterable<Post> findTop6NewByCategory(@Param("id") Long id);
+
     Iterable<Post> findAllByStatus(int status);
     Iterable<Post> findAllByTitle(String title);
 

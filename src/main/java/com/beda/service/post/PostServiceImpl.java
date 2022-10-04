@@ -66,6 +66,11 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
+    public Iterable<Post> findTop6ByCategoryId(Long categoryId) {
+        return postRepository.findTop6NewByCategory(categoryId);
+    }
+
+    @Override
     public Iterable<Post> findTop6New() {
         return postRepository.findTop6New();
     }
