@@ -80,7 +80,7 @@ public class PostController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping("/categories/{categoryId}")
+    @GetMapping("/findTop6By/categories/{categoryId}")
     public ResponseEntity<Iterable<Post>> findTop6ByCategoryId(@PathVariable Long categoryId) {
         Iterable<Post> posts = postService.findTop6ByCategoryId(categoryId);
         if (posts == null) {
