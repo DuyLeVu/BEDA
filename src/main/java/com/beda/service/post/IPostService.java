@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface IPostService extends IGeneralService<Post> {
+    Page<Post> getAll(Pageable pageable);
+
     Iterable<Post> getAllPostByIndex(int index);
 
     Iterable<Post> findAllByStatus(int status);
@@ -22,7 +24,7 @@ public interface IPostService extends IGeneralService<Post> {
 
     Iterable<Post> findAllByUserId(Long userId);
 
-    Iterable<Post> findAllByCategoryId(Long categoryId);
+    Page<Post> findAllByCategoryId(Long categoryId, Pageable pageable);
 
     Iterable<Post> findTop6ByCategoryId(Long categoryId);
 

@@ -5,6 +5,7 @@ import com.beda.model.User;
 import com.beda.service.UserService;
 import com.beda.service.post.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,8 +28,8 @@ public class PostController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("")
-    public ResponseEntity<Iterable<Post>> showAll() {
-        Iterable<Post> posts = postService.findAll();
+    public ResponseEntity<Page<Post>> showAll(Pageable pageable) {
+        Page<Post> posts = postService.getAll(pageable);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
@@ -71,8 +72,8 @@ public class PostController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/categories/{categoryId}")
-    public ResponseEntity<Iterable<Post>> getAllByCategoryId(@PathVariable Long categoryId) {
-        Iterable<Post> posts = postService.findAllByCategoryId(categoryId);
+    public ResponseEntity<Page<Post>> getAllByCategoryId(@PathVariable Long categoryId, Pageable pageable) {
+        Page<Post> posts = postService.findAllByCategoryId(categoryId, pageable);
         if (posts == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

@@ -1,5 +1,6 @@
 package com.beda.service.Impl;
 
+import com.beda.exception.AppException;
 import com.beda.model.User;
 import com.beda.model.UserPrinciple;
 import com.beda.repository.UserRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
+
 @Component
 @Service
 public class UserServiceImpl implements UserService {
@@ -89,7 +91,7 @@ public class UserServiceImpl implements UserService {
         boolean isCorrectUser = false;
         for (User currentUser : users) {
             if (currentUser.getUsername().equals(user.getUsername())
-                    && user.getPassword().equals(currentUser.getPassword())&&
+                    && user.getPassword().equals(currentUser.getPassword()) &&
                     currentUser.isEnabled()) {
                 isCorrectUser = true;
             }
@@ -113,7 +115,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isCorrectConfirmPassword(User user) {
         boolean isCorrentConfirmPassword = false;
-        if(user.getPassword().equals(user.getConfirmPassword())){
+        if (user.getPassword().equals(user.getConfirmPassword())) {
             isCorrentConfirmPassword = true;
         }
         return isCorrentConfirmPassword;

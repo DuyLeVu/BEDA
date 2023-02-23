@@ -3,9 +3,15 @@ package com.beda.service.post;
 import com.beda.model.Post;
 import com.beda.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+
 @Service
 public class PostServiceImpl implements IPostService {
     @Autowired
@@ -23,11 +29,27 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Post save(Post post) {
+//        this.cutString(post.getDetail());
+//        String abc = this.cutString(post.getDetail());
+//        post.setDetail(abc);
         return postRepository.save(post);
     }
 
     @Override
     public void remove(Long id) {
+    }
+
+    @Override
+    public Page<Post> getAll(Pageable pageable) {
+        int size = pageable.getPageSize();
+        int page = pageable.getPageNumber();
+        if (page >= 1) {
+            page = page - 1;
+        } else if (page < 0) {
+            page = 0;
+        }
+        Pageable pageDefault = PageRequest.of(page, size);
+        return postRepository.findAll(pageDefault);
     }
 
     @Override
@@ -61,8 +83,17 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Iterable<Post> findAllByCategoryId(Long categoryId) {
-        return postRepository.findAllByCategoryId(categoryId);
+    public Page<Post> findAllByCategoryId(Long categoryId, Pageable pageable) {
+        int size = pageable.getPageSize();
+        int page = pageable.getPageNumber();
+        if (page >= 1) {
+            page = page - 1;
+        } else if (page < 0) {
+            page = 0;
+        }
+        Pageable pageDefault = PageRequest.of(page, size);
+        List<Post> posts = postRepository.findAllByCategoryId(categoryId, pageDefault.getOffset(), pageDefault.getPageSize());
+        return new PageImpl<>(posts, pageDefault, posts.size());
     }
 
     @Override
@@ -73,5 +104,20 @@ public class PostServiceImpl implements IPostService {
     @Override
     public Iterable<Post> findTop6New() {
         return postRepository.findTop6New();
+    }
+
+    private String cutString(String input) {
+        try {
+            String result = "";
+            String[] strs = input.split("(?<=img)");
+            for (int i = 0; i < strs.length; i++) {
+//            System.out.println(strs[i]);
+                result += strs[i] + " style=\"width: 750px; height: 375px\"";
+//            System.out.println(result);
+            }
+            return result;
+        } catch (Exception e) {
+            return e.toString();
+        }
     }
 }

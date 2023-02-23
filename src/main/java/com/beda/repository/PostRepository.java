@@ -1,11 +1,14 @@
 package com.beda.repository;
 
 import com.beda.model.Post;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -26,8 +29,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Iterable<Post> findAllByTitle(String title);
 
     @Modifying
-    @Query(value = "select * from Post where status = 1 and category_id = :id", nativeQuery = true)
-    Iterable<Post> findAllByCategoryId(@Param("id") Long id);
+    @Query(value = "select * from Post where status = 1 and category_id = ?1 order by id" +
+            " Limit ?2,?3 " , nativeQuery = true)
+    List<Post> findAllByCategoryId(@Param("id") Long id, @Param("startPage") Long startPage, @Param("pageSize") int pageSize);
 
     @Modifying
     @Query(value = "select * from Post where status = 1 and category_id = ?1 order by id desc limit ?2,5;", nativeQuery = true)

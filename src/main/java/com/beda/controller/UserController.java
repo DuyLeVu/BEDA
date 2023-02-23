@@ -1,5 +1,6 @@
 package com.beda.controller;
 
+import com.beda.exception.AppException;
 import com.beda.model.JwtResponse;
 import com.beda.model.Role;
 import com.beda.model.User;
@@ -58,18 +59,18 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user, BindingResult bindingResult) throws AppException {
         if (bindingResult.hasFieldErrors()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Iterable<User> users = userService.findAll();
         for (User currentUser : users) {
             if (currentUser.getUsername().equals(user.getUsername())) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                throw new AppException("Username already exists!");
             }
         }
         if (!userService.isCorrectConfirmPassword(user)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new AppException("Confirm password does not match");
         }
         if (user.getRoles() != null) {
             Role role = roleService.findByName("ROLE_ADMIN");
