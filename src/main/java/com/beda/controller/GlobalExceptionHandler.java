@@ -1,6 +1,8 @@
 package com.beda.controller;
 
 import com.beda.exception.AppException;
+import com.beda.exception.InputInvalidException;
+import com.beda.exception.PostNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -8,9 +10,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(AppException.class)  // Có thể bắt nhiều loại exception
-    public ResponseEntity<String> handleAppException(AppException e) {
+    @ExceptionHandler({AppException.class, InputInvalidException.class})  // Có thể bắt nhiều loại exception
+    public ResponseEntity<String> handleCustomException(AppException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler({PostNotFoundException.class})  // Có thể bắt nhiều loại exception
+    public ResponseEntity<String> handlePostNotFoundException(AppException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleUnwantedException(Exception e) {

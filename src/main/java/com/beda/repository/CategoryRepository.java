@@ -13,4 +13,10 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Modifying
     @Query(value = "select * from Category order by id desc limit 7;", nativeQuery = true)
     Iterable<Category> findTop7Category();
+
+    @Modifying
+    @Query(value = "select * from category left join roles " +
+            "on category.role_id = roles.id " +
+            "where roles.id = 2", nativeQuery = true)
+    Iterable<Category> getCategoryForUser();
 }

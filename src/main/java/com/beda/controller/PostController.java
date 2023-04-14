@@ -1,14 +1,15 @@
 package com.beda.controller;
 
+import com.beda.exception.AppException;
+import com.beda.model.Comment;
 import com.beda.model.Post;
-import com.beda.model.User;
 import com.beda.service.UserService;
 import com.beda.service.post.IPostService;
+import org.aspectj.lang.annotation.RequiredTypes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,7 +63,7 @@ public class PostController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/categories/{categoryId}/index")
     public ResponseEntity<Iterable<Post>> getAllByCategoryIdAndIndex(@PathVariable Long categoryId,
-                                                             @RequestParam int index) {
+                                                                     @RequestParam int index) {
         Iterable<Post> posts = postService.findAllByCategoryIdAndIndex(categoryId, index);
         if (posts == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -71,7 +72,7 @@ public class PostController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping("/categories/{categoryId}")
+    @GetMapping("/category/{categoryId}")
     public ResponseEntity<Page<Post>> getAllByCategoryId(@PathVariable Long categoryId, Pageable pageable) {
         Page<Post> posts = postService.findAllByCategoryId(categoryId, pageable);
         if (posts == null) {
@@ -90,7 +91,6 @@ public class PostController {
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
-
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/findTopNew")
     public ResponseEntity<Iterable<Post>> findTop6New() {
@@ -107,11 +107,11 @@ public class PostController {
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<Iterable<Post>> getAllByUserId(@PathVariable Long userId) {
-        Iterable<Post> posts = postService.findAllByUserId(userId);
-        return new ResponseEntity<>(posts, HttpStatus.OK);
-    }
+//    @GetMapping("/user/{userId}")
+//    public ResponseEntity<Iterable<Post>> getAllByUserId(@PathVariable Long userId) {
+//        Iterable<Post> posts = postService.findAllByUserId(userId);
+//        return new ResponseEntity<>(posts, HttpStatus.OK);
+//    }
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/{id}")
@@ -124,37 +124,52 @@ public class PostController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @PostMapping
-    public ResponseEntity<Post> save(@RequestBody Post post) {
-        Date date = new Date(Calendar.getInstance().getTime().getTime());
-        post.setCreateAt(date);
-//        post.setLikes((long) 0);
-        postService.save(post);
-        User user = post.getUser();
-        Long oldPosts = user.getPosts();
-        oldPosts = oldPosts == null ? Long.valueOf(0) : oldPosts;
-        user.setPosts(oldPosts + Long.valueOf(1));
-        userService.save(user);
-        return new ResponseEntity(post, HttpStatus.OK);
+    @GetMapping("/byAdmin")
+    public ResponseEntity<Iterable<Post>> getTop4PostByAdmin() {
+        Iterable<Post> posts = postService.getTop4PostByAdmin();
+        if (posts == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping
+    public ResponseEntity<Post> save(@RequestBody Post post) throws AppException {
+        return new ResponseEntity(postService.save(post), HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping("/edit/{id}")
     public ResponseEntity<Post> update(@PathVariable Long id, @RequestBody Post post) {
-        Date date = new Date(Calendar.getInstance().getTime().getTime());
-        post.setCreateAt(date);
-        post.setId(id);
-        postService.save(post);
-        return new ResponseEntity<>(post, HttpStatus.OK);
+//        return new ResponseEntity(postService.save(post), HttpStatus.OK);
+        return new ResponseEntity<>(postService.updatePost(id, post).get(), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @CrossOrigin(origins = "http://localhost:4200")
+    @DeleteMapping("/del/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
-        Optional<Post> post = postService.findById(id);
-        if (!post.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        post.get().setStatus(0);
-        postService.save(post.get());
+        postService.remove(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<Optional<Post>> comment(@PathVariable("id") Long id, @RequestBody Comment commentForm, @RequestParam(value = "idParent", required = false) Long idParent) {
+            return new ResponseEntity<>(postService.addCommentPost(id, commentForm, idParent), HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/admin")
+    public ResponseEntity<Page<Post>> getAllForAdmin(Pageable pageable) {
+        Page<Post> posts = postService.getAllForAdmin(pageable);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/question")
+    public ResponseEntity<Page<Post>> getAllQuestion(Pageable pageable) {
+        Page<Post> posts = postService.getAllQuestion(pageable);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 }

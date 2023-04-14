@@ -2,6 +2,7 @@ package com.beda.model;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "post")
@@ -9,27 +10,36 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
 
     @Column(length = 3000)
     private String content;
 
     private Date createAt;
+
     private int status;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
     private String description;
+
     private String detail;
     private String imgs;
+
+    @OneToMany(targetEntity = Comment.class)
+    private List<Comment> listComment;
 
     public Post() {
     }
 
-    public Post(Long id, String title, String content, Date createAt, int status, User user, Category category, String description, String detail, String imgs) {
+    public Post(Long id, String title, String content, Date createAt, int status, User user, Category category, String description, String detail, String imgs, List<Comment> listComment) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -40,6 +50,7 @@ public class Post {
         this.description = description;
         this.detail = detail;
         this.imgs = imgs;
+        this.listComment = listComment;
     }
 
     public Long getId() {
@@ -120,5 +131,13 @@ public class Post {
 
     public void setDetail(String detail) {
         this.detail = detail;
+    }
+
+    public List<Comment> getListComment() {
+        return listComment;
+    }
+
+    public void setListComment(List<Comment> listComment) {
+        this.listComment = listComment;
     }
 }

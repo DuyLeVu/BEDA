@@ -1,17 +1,19 @@
 package com.beda.controller;
 
+import com.beda.Utils;
 import com.beda.exception.AppException;
-import com.beda.model.JwtResponse;
-import com.beda.model.Role;
-import com.beda.model.User;
-import com.beda.model.VerificationToken;
+import com.beda.exception.InputInvalidException;
+import com.beda.model.*;
 import com.beda.service.Impl.JwtService;
 import com.beda.service.RoleService;
 import com.beda.service.UserService;
 import com.beda.service.VerificationTokenService;
+import com.beda.service.post.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +29,7 @@ import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
 @RestController
 @PropertySource("classpath:application.properties")
 @CrossOrigin("*")
@@ -52,6 +55,9 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private IPostService postService;
+
     @GetMapping("/users")
     public ResponseEntity<Iterable<User>> showAllUser() {
         Iterable<User> users = userService.findAll();
@@ -59,18 +65,26 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user, BindingResult bindingResult) throws AppException {
-        if (bindingResult.hasFieldErrors()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<User> createUser(@RequestBody User user, BindingResult bindingResult) throws AppException {
+//        if (bindingResult.hasFieldErrors()) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+        if (Utils.stringIsEmpty(Utils.trimToEmpty(user.getUsername()))) {
+            throw new InputInvalidException("Tên tài khoản không hợp lệ");
         }
+        if (user.getUsername().length() < 6 || user.getUsername().length() > 50) {
+            throw new InputInvalidException("Tên tài khoản có độ dài từ 6 - 50");
+        }
+        userService.validateEmail(user);
+        userService.validatePassword(user);
         Iterable<User> users = userService.findAll();
         for (User currentUser : users) {
             if (currentUser.getUsername().equals(user.getUsername())) {
-                throw new AppException("Username already exists!");
+                throw new AppException("Tên tài khoản đã được sử dụng");
             }
         }
         if (!userService.isCorrectConfirmPassword(user)) {
-            throw new AppException("Confirm password does not match");
+            throw new AppException("Vui lòng xác nhận lại mật khẩu");
         }
         if (user.getRoles() != null) {
             Role role = roleService.findByName("ROLE_ADMIN");
@@ -93,17 +107,14 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    @PostMapping("/matchPassword")
+    @PostMapping("/match-password")
     public ResponseEntity<User> matches(@RequestBody User user) {
-        Optional<User> userOptional = this.userService.findById(user.getId());
-        if (passwordEncoder.matches(user.getPassword(), userOptional.get().getPassword())){
-            return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
-        }else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(userService.matchPassword(user), HttpStatus.OK);
     }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -114,7 +125,7 @@ public class UserController {
     }
 
     @GetMapping("/hello")
-    public ResponseEntity<String> hello(){
+    public ResponseEntity<String> hello() {
         return new ResponseEntity("Hello World", HttpStatus.OK);
     }
 
@@ -124,25 +135,36 @@ public class UserController {
         return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping("/users/{id}")
-    public ResponseEntity<User> updateUserProfile(@PathVariable Long id, @RequestBody User user) {
-        Optional<User> userOptional = this.userService.findById(id);
-        if (!userOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<User> updateUserProfile(@PathVariable Long id,@RequestBody User user, BindingResult bindingResult) {
+//        validate email & phone number
+//        if (bindingResult.hasFieldErrors()) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+        return new ResponseEntity<>(userService.updateUserProfile(id, user), HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/users/{id}/posts")
+    public ResponseEntity<Page<Post>> getUserPosts(@PathVariable Long id, Pageable pageable) {
+        Page<Post> posts = this.postService.findAllByUserId(id, pageable);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PutMapping("/users/update-info/{id}")
+    public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User user) {
+        return new ResponseEntity<>(userService.updatePassword(id, user), HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/admin")
+    public ResponseEntity<Page<User>> getAll(Pageable pageable) {
+        Page<User> users = userService.getAll(pageable);
+        if (users == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        user.setId(userOptional.get().getId());
-        user.setUsername(userOptional.get().getUsername());
-        user.setEnabled(userOptional.get().isEnabled());
-        if (!user.getPassword().equals(userOptional.get().getPassword())){
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-        }else {user.setPassword(userOptional.get().getPassword());}
-        user.setRoles(userOptional.get().getRoles());
-        if (!user.getConfirmPassword().equals(userOptional.get().getConfirmPassword())){
-            user.setConfirmPassword(passwordEncoder.encode(user.getConfirmPassword()));
-        }else { user.setConfirmPassword(userOptional.get().getConfirmPassword());}
-
-
-        userService.save(user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 }

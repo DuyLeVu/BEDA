@@ -1,6 +1,8 @@
 package com.beda.service;
 
 import com.beda.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -24,4 +26,16 @@ public interface UserService extends UserDetailsService {
     boolean isRegister(User user);
 
     boolean isCorrectConfirmPassword(User user);
+
+    User matchPassword(User user);
+
+    User updatePassword(Long id, User user);
+
+    void validatePassword(User user);
+
+    void validateEmail(User user);
+
+    User updateUserProfile(Long id, User user);
+
+    Page<User> getAll(Pageable pageable);
 }

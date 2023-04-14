@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Email;
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -39,7 +40,7 @@ public class User implements Serializable {
     private String email;
 
     @Pattern(regexp = "^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$",message = "Không phải số điện thoại hợp lệ")
-    private String phone;
+    private String phoneNumber;
 
     private String avatar = "assets/images/defaultAva.png";
 
@@ -47,9 +48,15 @@ public class User implements Serializable {
 
     private Long comments;
 
+    private Long questions;
+
     private Long linkDocs;
 
     private int status;
+
+    private Date dateOfBirth;
+
+    private String gender;
 
     public User() {
     }
@@ -118,14 +125,6 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     public String getAvatar() {
         return avatar;
     }
@@ -164,6 +163,38 @@ public class User implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Long getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(Long questions) {
+        this.questions = questions;
     }
 }
 

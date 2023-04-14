@@ -1,12 +1,8 @@
 package com.beda.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+public class AppException extends RuntimeException {
 
-@Getter
-@AllArgsConstructor
-public class AppException extends Exception {
-    private static final long serialVersionUID = 1L;
-
-    private String message;
+    public AppException(String message) {
+        super(message);
+    }
 }

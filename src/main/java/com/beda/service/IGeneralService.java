@@ -1,5 +1,7 @@
 package com.beda.service;
 
+import com.beda.exception.AppException;
+
 import java.util.Optional;
 
 public interface IGeneralService <T> {
@@ -7,7 +9,7 @@ public interface IGeneralService <T> {
 
     Optional<T> findById(Long id);
 
-    T save(T t);
+    T save(T t) throws AppException;
 
     void remove(Long id);
 }
