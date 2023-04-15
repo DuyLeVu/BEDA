@@ -195,26 +195,26 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public Optional<Post> addCommentPost(Long id, Comment comment, Long idParent) {
-        if (idParent != null) {
-            Date date = new Date(Calendar.getInstance().getTime().getTime());
-            comment.setCreateAt(date);
-            Optional<Comment> commentEntity = commentRepository.findById(idParent);
-            if (commentEntity.isPresent()) {
-                commentEntity.get().getChildrenComment().add(comment);
-                commentRepository.save(commentEntity.get());
-                User user = comment.getUser();
-                Long oldPosts = user.getComments();
-                oldPosts = oldPosts == null ? Long.valueOf(0) : oldPosts;
-                user.setComments(oldPosts + Long.valueOf(1));
-                userService.save(user);
-                Optional<Post> postEntity = postRepository.findById(id);
-                if (postEntity.isPresent()) {
-                    int indexOfCommentOld = postEntity.get().getListComment().indexOf(commentEntity.get());
-                    postEntity.get().getListComment().set(indexOfCommentOld, commentEntity.get());
-                }
-                return postEntity;
-            } else throw new AppException("Bài viết không tồn tại");
-        } else {
+//        if (idParent != null) {
+//            Date date = new Date(Calendar.getInstance().getTime().getTime());
+//            comment.setCreateAt(date);
+//            Optional<Comment> commentEntity = commentRepository.findById(idParent);
+//            if (commentEntity.isPresent()) {
+//                commentEntity.get().getChildrenComment().add(comment);
+//                commentRepository.save(commentEntity.get());
+//                User user = comment.getUser();
+//                Long oldPosts = user.getComments();
+//                oldPosts = oldPosts == null ? Long.valueOf(0) : oldPosts;
+//                user.setComments(oldPosts + Long.valueOf(1));
+//                userService.save(user);
+//                Optional<Post> postEntity = postRepository.findById(id);
+//                if (postEntity.isPresent()) {
+//                    int indexOfCommentOld = postEntity.get().getListComment().indexOf(commentEntity.get());
+//                    postEntity.get().getListComment().set(indexOfCommentOld, commentEntity.get());
+//                }
+//                return postEntity;
+//            } else throw new AppException("Bài viết không tồn tại");
+//        } else {
             Date date = new Date(Calendar.getInstance().getTime().getTime());
             comment.setCreateAt(date);
             commentRepository.save(comment);
@@ -229,7 +229,7 @@ public class PostServiceImpl implements IPostService {
                 userService.save(user);
                 return postEntity;
             } else throw new AppException("Bài viết không tồn tại");
-        }
+//        }
     }
 
     @Override
@@ -265,6 +265,12 @@ public class PostServiceImpl implements IPostService {
         List<Post> posts = postRepository.getAllByStatusAndUserAndDes("2", pageDefault.getOffset(), pageDefault.getPageSize());
         long countPosts = postRepository.countListPostByStatusAndUserAndDes("2");
         return new PageImpl<>(posts, pageDefault, countPosts);
+    }
+
+    @Override
+    public Iterable<Post> getTop5PostByUserId(Long currentPostId, Long userId) {
+        Iterable<Post> posts = postRepository.getTop5PostByUserId(currentPostId, userId);
+        return posts;
     }
 
     private void validateInput(Post post) throws InputInvalidException {

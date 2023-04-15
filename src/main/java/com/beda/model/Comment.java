@@ -19,8 +19,8 @@ public class Comment {
 
 //    private Long likes;
 
-    @OneToMany(targetEntity = Comment.class, cascade = {CascadeType.ALL})
-    private List<Comment> childrenComment;
+//    @OneToMany(targetEntity = Comment.class, cascade = {CascadeType.ALL})
+//    private List<Comment> childrenComment;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

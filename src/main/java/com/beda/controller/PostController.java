@@ -172,4 +172,14 @@ public class PostController {
         Page<Post> posts = postService.getAllQuestion(pageable);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/top5/{postId}/{userId}")
+    public ResponseEntity<Iterable<Post>> getTop5PostByUserId(@PathVariable("postId") Long currentPostId, @PathVariable("userId") Long userId) {
+        Iterable<Post> posts = postService.getTop5PostByUserId(currentPostId, userId);
+        if (posts == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
 }

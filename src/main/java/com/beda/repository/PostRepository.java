@@ -70,4 +70,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = "select COUNT(*) from `post` as p where " +
             "p.`status` = 1 and p.`category_id` = ?1 ", nativeQuery = true)
     long countPostByCategoryId(@Param("categoryId") Long categoryId);
+
+    @Modifying
+    @Query(value = "select * from (select * from post where id != ?1) as p " +
+            "where p.`status` = 1 " +
+            "and p.`user_id` = ?2 " +
+            "order by id desc limit 5; ", nativeQuery = true)
+    Iterable<Post> getTop5PostByUserId(@Param("postId") Long currentPostId, @Param("userId") Long userId);
 }
