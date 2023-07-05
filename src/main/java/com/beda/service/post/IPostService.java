@@ -26,6 +26,8 @@ public interface IPostService extends IGeneralService<Post> {
 
     Page<Post> findAllByUserId(Long userId, Pageable pageable);
 
+    Page<Post> findAllQuestionsByUserId(Long userId, Pageable pageable);
+
     Page<Post> findAllByCategoryId(Long categoryId, Pageable pageable);
 
     Iterable<Post> findTop6ByCategoryId(Long categoryId);

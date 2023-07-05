@@ -153,6 +153,13 @@ public class UserController {
     }
 
     @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/users/question/{id}")
+    public ResponseEntity<Page<Post>> getUserQuestions(@PathVariable Long id, Pageable pageable) {
+        Page<Post> posts = this.postService.findAllQuestionsByUserId(id, pageable);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping("/users/update-info/{id}")
     public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User user) {
         return new ResponseEntity<>(userService.updatePassword(id, user), HttpStatus.OK);

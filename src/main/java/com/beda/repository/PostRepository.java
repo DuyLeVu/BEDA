@@ -39,13 +39,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Iterable<Post> findByTitleContainingAndCategoryId(String title, Long id);
 
     @Modifying
-    @Query(value = "select * from Post where status = 1 and user_id = ?1 order by id" +
-            " Limit ?2,?3 ", nativeQuery = true)
-    List<Post> findAllByUserId(@Param("id") Long id, @Param("startPage") Long startPage, @Param("pageSize") int pageSize);
+    @Query(value = "select * from Post where status = 1 "+
+            "and description = ?1 " +
+            "and user_id = ?2 order by id" +
+            " Limit ?3,?4 ", nativeQuery = true)
+    List<Post> findAllByUserId(@Param("description") String description,@Param("id") Long id, @Param("startPage") Long startPage, @Param("pageSize") int pageSize);
 
-    //    @Query(value = "select p.content, p.create_at, p.description, p.detail, p.status, p.category_id, p.user_id, p.title, p.imgs " +
-//            "from post p left join user_role r on p.user_id = r.user_id " +
-//            "where p.status = 1 and r.role_id = 1 order by p.create_at asc limit 4;", nativeQuery = true)
     @Modifying
     @Query(value = "select p.`id`, p.`content`, p.`create_at`, p.`description`, p.`detail`, p.`status`, p.`category_id`, p.`user_id`, p.`title`, p.`imgs` from `post` as p left join `user_role` as r on p.`user_id` = r.`user_id` where p.`status` = 1 and r.`role_id` = 1 order by p.`create_at` desc limit 4;", nativeQuery = true)
     List<Post> getTop4PostByAdmin();
@@ -64,8 +63,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     long countListPostByStatusAndUserAndDes(@Param("description") String description);
 
     @Query(value = "select COUNT(p.id) from `post` as p where " +
-            "p.`status` = 1 and p.`user_id` = ?1 ", nativeQuery = true)
-    long countListPostByUserId(@Param("userId") Long userId);
+            "p.`status` = 1 and p.`user_id` = ?1 " +
+            "and p.`description` = ?2 ", nativeQuery = true)
+    long countListPostByUserId(@Param("userId") Long userId, @Param("description") String description);
 
     @Query(value = "select COUNT(*) from `post` as p where " +
             "p.`status` = 1 and p.`category_id` = ?1 ", nativeQuery = true)

@@ -136,8 +136,23 @@ public class PostServiceImpl implements IPostService {
             page = 0;
         }
         Pageable pageDefault = PageRequest.of(page, size);
-        List<Post> posts = postRepository.findAllByUserId(userId, pageDefault.getOffset(), pageDefault.getPageSize());
-        Long coutListPostByUserId = postRepository.countListPostByUserId(userId);
+        List<Post> posts = postRepository.findAllByUserId("1",userId, pageDefault.getOffset(), pageDefault.getPageSize());
+        Long coutListPostByUserId = postRepository.countListPostByUserId(userId, "1");
+        return new PageImpl<>(posts, pageDefault, coutListPostByUserId);
+    }
+
+    @Override
+    public Page<Post> findAllQuestionsByUserId(Long userId, Pageable pageable) {
+        int size = pageable.getPageSize();
+        int page = pageable.getPageNumber();
+        if (page >= 1) {
+            page = page - 1;
+        } else if (page < 0) {
+            page = 0;
+        }
+        Pageable pageDefault = PageRequest.of(page, size);
+        List<Post> posts = postRepository.findAllByUserId("2", userId, pageDefault.getOffset(), pageDefault.getPageSize());
+        Long coutListPostByUserId = postRepository.countListPostByUserId(userId, "2");
         return new PageImpl<>(posts, pageDefault, coutListPostByUserId);
     }
 
