@@ -1,6 +1,6 @@
 package com.beda.controller;
 
-import com.beda.Utils;
+import com.beda.util.Utils;
 import com.beda.exception.AppException;
 import com.beda.exception.InputInvalidException;
 import com.beda.model.*;
@@ -25,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;

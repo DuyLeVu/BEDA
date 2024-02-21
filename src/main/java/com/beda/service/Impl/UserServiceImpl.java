@@ -1,6 +1,6 @@
 package com.beda.service.Impl;
 
-import com.beda.Utils;
+import com.beda.util.Utils;
 import com.beda.exception.AppException;
 import com.beda.exception.InputInvalidException;
 import com.beda.model.User;

@@ -1,4 +1,4 @@
-package com.beda;
+package com.beda.util;
 
 public class Utils {
     public static String trimToEmpty(String str){
